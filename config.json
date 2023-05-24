@@ -1,0 +1,24 @@
+{
+  "branches": [
+    "k8sconfig",
+    "clientback",
+    "clientfront",
+    "adminback",
+    "adminfront"
+  ],
+  "microservices": [
+    "adminback",
+    "adminer",
+    "adminfront",
+    "clientback",
+    "clientfront",
+    "keycloak",
+    "minio",
+    "mongo",
+    "mongo-express",
+    "mysql",
+    "phpmyadmin",
+    "postgres",
+    "rabbitmq"
+  ]
+}

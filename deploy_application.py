@@ -1,0 +1,41 @@
+import os
+import subprocess
+import time
+import json
+
+# Define the root directory and k8sconfig directory
+root_dir = os.getcwd()
+k8sconfig_dir = os.path.join(root_dir, 'k8sconfig')
+
+# Read the microservices from a JSON file
+with open('config.json', 'r') as f:
+    data = json.load(f)
+    microservices = data['microservices']  # The JSON file should have a "microservices" key
+
+for microservice in microservices:
+    # Apply volume and config .yml files for each microservice in the k8sconfig directory
+    for file_name in ['volume.yml', 'config.yml']:
+        file_path = os.path.join(k8sconfig_dir, microservice, file_name)
+        if os.path.isfile(file_path):
+            try:
+                subprocess.check_call(['kubectl', 'apply', '-f', file_path])
+                if file_name == 'volume.yml':  # if it's a volume configuration, add a delay
+                    time.sleep(10)  # sleep for 10 seconds
+            except subprocess.CalledProcessError:
+                print(f'Failed to apply {file_name} for microservice {microservice}')
+    
+    # Check if there's a directory for the microservice and if it has a skaffold.yaml file
+    microservice_dir = os.path.join(root_dir, microservice)
+    if os.path.isdir(microservice_dir) and os.path.isfile(os.path.join(microservice_dir, 'skaffold.yaml')):
+        try:
+            os.chdir(microservice_dir)
+            subprocess.check_call(['skaffold', 'run'])
+        except subprocess.CalledProcessError:
+            print(f'Skaffold failed for microservice {microservice}')
+    else:  # If no skaffold file, apply the deployment configuration
+        deployment_file = os.path.join(k8sconfig_dir, microservice, 'deployment.yml')
+        if os.path.isfile(deployment_file):
+            try:
+                subprocess.check_call(['kubectl', 'apply', '-f', deployment_file])
+            except subprocess.CalledProcessError:
+                print(f'Failed to apply deployment for microservice {microservice}')
