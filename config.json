@@ -1,6 +1,7 @@
 {
   "branches": [
     "k8sconfig",
+    "keycloakify",
     "clientback",
     "clientfront",
     "adminback",

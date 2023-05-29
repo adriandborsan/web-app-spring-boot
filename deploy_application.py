@@ -2,10 +2,12 @@ import os
 import subprocess
 import time
 import json
-
+print('Deploy script started')
 # Define the root directory and k8sconfig directory
-root_dir = os.getcwd()
+root_dir = os.path.dirname(os.getcwd())
 k8sconfig_dir = os.path.join(root_dir, 'k8sconfig')
+print(f'root_dir is {root_dir}')
+print(f'k8sconfig_dir is {k8sconfig_dir}')
 
 # Read the microservices from a JSON file
 with open('config.json', 'r') as f:
@@ -13,11 +15,14 @@ with open('config.json', 'r') as f:
     microservices = data['microservices']  # The JSON file should have a "microservices" key
 
 for microservice in microservices:
+    print(f'we are at the microservice: {microservice}')
     # Apply volume and config .yml files for each microservice in the k8sconfig directory
     for file_name in ['volume.yml', 'config.yml']:
         file_path = os.path.join(k8sconfig_dir, microservice, file_name)
+        
         if os.path.isfile(file_path):
             try:
+                print(f'   microservice: {microservice} file_path is {file_path} exists')
                 subprocess.check_call(['kubectl', 'apply', '-f', file_path])
                 if file_name == 'volume.yml':  # if it's a volume configuration, add a delay
                     time.sleep(10)  # sleep for 10 seconds
@@ -39,3 +44,5 @@ for microservice in microservices:
                 subprocess.check_call(['kubectl', 'apply', '-f', deployment_file])
             except subprocess.CalledProcessError:
                 print(f'Failed to apply deployment for microservice {microservice}')
+
+print('done')
