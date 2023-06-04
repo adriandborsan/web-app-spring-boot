@@ -8,7 +8,8 @@ root_dir = os.path.dirname(os.getcwd())
 k8sconfig_dir = os.path.join(root_dir, 'k8sconfig')
 print(f'root_dir is {root_dir}')
 print(f'k8sconfig_dir is {k8sconfig_dir}')
-
+subprocess.check_call(["minikube", "addons", "enable","ingress"])
+subprocess.check_call(["minikube", "addons", "enable","ingress-dns"])
 # Read the microservices from a JSON file
 with open('config.json', 'r') as f:
     data = json.load(f)
@@ -44,5 +45,6 @@ for microservice in microservices:
                 subprocess.check_call(['kubectl', 'apply', '-f', deployment_file])
             except subprocess.CalledProcessError:
                 print(f'Failed to apply deployment for microservice {microservice}')
-
+subprocess.check_call(["kubectl", "apply", "-k", "../k8sconfig/ingress"])
+subprocess.check_call(["kubectl", "rollout", "restart", "-n", "ingress-nginx", "deployment", "ingress-nginx-controller"])
 print('done')

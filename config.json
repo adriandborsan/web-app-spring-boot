@@ -8,18 +8,18 @@
     "adminfront"
   ],
   "microservices": [
-    "adminback",
-    "adminer",
-    "adminfront",
-    "clientback",
-    "clientfront",
-    "keycloak",
-    "minio",
     "mongo",
     "mongo-express",
     "mysql",
     "phpmyadmin",
     "postgres",
-    "rabbitmq"
+    "rabbitmq",
+    "adminer",
+    "keycloak",
+    "minio",
+    "clientback",
+    "clientfront",
+    "adminback",
+    "adminfront"
   ]
 }
