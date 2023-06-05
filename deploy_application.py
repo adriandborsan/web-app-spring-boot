@@ -46,5 +46,6 @@ for microservice in microservices:
             except subprocess.CalledProcessError:
                 print(f'Failed to apply deployment for microservice {microservice}')
 subprocess.check_call(["kubectl", "apply", "-k", "../k8sconfig/ingress"])
+subprocess.check_call(["kubectl", "apply", "-f", "../k8sconfig/ingress/ingress.yaml"])
 subprocess.check_call(["kubectl", "rollout", "restart", "-n", "ingress-nginx", "deployment", "ingress-nginx-controller"])
 print('done')
